@@ -49,6 +49,9 @@ dependencies {
 	// Cardinal Components API
 	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.1")
 	include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.0.1")
+
+	// PlayerAbilityLib
+	include modImplementation("io.github.ladysnake:PlayerAbilityLib:1.6.0")
 }
 
 processResources {
