@@ -1,8 +1,12 @@
 package com.technovision.advancedgenetics.component;
 
+import com.technovision.advancedgenetics.AdvancedGenetics;
 import com.technovision.advancedgenetics.api.component.EntityGeneticsComponent;
 import com.technovision.advancedgenetics.api.genetics.Genes;
 import com.technovision.advancedgenetics.registry.ComponentRegistry;
+import io.github.ladysnake.pal.AbilitySource;
+import io.github.ladysnake.pal.Pal;
+import io.github.ladysnake.pal.VanillaAbilities;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +27,7 @@ public class PlayerGeneticsComponent implements EntityGeneticsComponent {
     private final PlayerEntity player;
     private int tickCounter;
     private long totalSeconds;
+    private final AbilitySource FLIGHT = Pal.getAbilitySource(new Identifier(AdvancedGenetics.MOD_ID, "flight"));
 
     public PlayerGeneticsComponent(PlayerEntity player) {
         this.player = player;
@@ -129,15 +135,11 @@ public class PlayerGeneticsComponent implements EntityGeneticsComponent {
      */
     private void checkFlightStatus() {
         if (player.isCreative()) return;
-        if (hasGene(Genes.FLIGHT) && !player.getAbilities().allowFlying) {
-            player.getAbilities().allowFlying = true;
-            player.sendAbilitiesUpdate();
-        } else if (!hasGene(Genes.FLIGHT) && player.getAbilities().allowFlying) {
-            player.getAbilities().allowFlying = false;
-            player.getAbilities().flying = false;
-            player.sendAbilitiesUpdate();
-        } else if (hasGene(Genes.FLIGHT) && player.isOnGround()) {
-            player.sendAbilitiesUpdate();
+
+        if (hasGene(Genes.FLIGHT) && !FLIGHT.grants(player, VanillaAbilities.ALLOW_FLYING)) {
+            FLIGHT.grantTo(player, VanillaAbilities.ALLOW_FLYING);
+        } else if (!hasGene(Genes.FLIGHT)) {
+            FLIGHT.revokeFrom(player, VanillaAbilities.ALLOW_FLYING);
         }
     }
 
